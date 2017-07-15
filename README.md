@@ -64,3 +64,9 @@ Handle Push Notification methods.
     NSLog(@"Error = %@",error);
 }
 ```
+# Add Notification Badge
+add below code in ```didReceiveRemoteNotification``` methods.
+```
+static int i=1;
+[UIApplication sharedApplication].applicationIconBadgeNumber = i++;
+```
