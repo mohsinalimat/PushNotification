@@ -95,6 +95,37 @@
     }
     completionHandler();
 }
+// This will fire in iOS 10 when the app is foreground or background, but not closed
+-(void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    // iOS 10 will handle notifications through other methods
+    
+    if( SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO( @"10.0" ) )
+    {
+        NSLog( @"iOS version >= 10. Let NotificationCenter handle this one." );
+        // set a member variable to tell the new delegate that this is background
+        return;
+    }
+    NSLog( @"HANDLE PUSH, didReceiveRemoteNotification: %@", userInfo );
+    
+    // custom code to handle notification content
+    
+    if( [UIApplication sharedApplication].applicationState == UIApplicationStateInactive )
+    {
+        NSLog( @"INACTIVE" );
+        completionHandler( UIBackgroundFetchResultNewData );
+    }
+    else if( [UIApplication sharedApplication].applicationState == UIApplicationStateBackground )
+    {
+        NSLog( @"BACKGROUND" );
+        completionHandler( UIBackgroundFetchResultNewData );
+    }  
+    else  
+    {  
+        NSLog( @"FOREGROUND" );  
+        completionHandler( UIBackgroundFetchResultNewData );  
+    }  
+}
 
 #pragma mark - Notification Registration
 - (void)registerForRemoteNotification
