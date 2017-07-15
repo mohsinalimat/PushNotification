@@ -73,33 +73,12 @@
 
 #pragma mark - UNUserNotificationCenter Delegate // >= iOS 10
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-    
-    NSLog(@"User Info = %@",notification.request.content.userInfo);
-
-    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
-    
-    NSLog(@"User Info = %@",response.notification.request.content.userInfo);
-    
-    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
-    if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
-    {
-        NSLog(@"Application Closed");
-    }
-    else
-    {
-        NSLog(@"Application Open");
-    }
-    completionHandler();
-}
 // This will fire in iOS 10 when the app is foreground or background, but not closed
 -(void) application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     // iOS 10 will handle notifications through other methods
-    
+    static int i=1;
+    [UIApplication sharedApplication].applicationIconBadgeNumber = i++;
     if( SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO( @"10.0" ) )
     {
         NSLog( @"iOS version >= 10. Let NotificationCenter handle this one." );
@@ -125,6 +104,29 @@
         NSLog( @"FOREGROUND" );  
         completionHandler( UIBackgroundFetchResultNewData );  
     }  
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    
+    NSLog(@"User Info = %@",notification.request.content.userInfo);
+
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
+    
+    NSLog(@"User Info = %@",response.notification.request.content.userInfo);
+    
+    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+    if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
+    {
+        NSLog(@"Application Closed");
+    }
+    else
+    {
+        NSLog(@"Application Open");
+    }
+    completionHandler();
 }
 
 #pragma mark - Notification Registration
